@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "name": "music-server",
+      "type": "com.haut.music.service.musicsource.conf.MusicServerConfig",
+      "sourceType": "com.haut.music.service.musicsource.conf.MusicServerConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "music-server.services",
+      "type": "java.util.Map<java.lang.String,com.haut.music.service.musicsource.conf.MusicServerProperty>",
+      "sourceType": "com.haut.music.service.musicsource.conf.MusicServerConfig"
+    }
+  ],
+  "hints": []
+}

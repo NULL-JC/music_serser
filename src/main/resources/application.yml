@@ -1,0 +1,67 @@
+server:
+  port: 9001
+logging:
+  config: classpath:logback-spring.xml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/music?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+music-server:
+  services:
+    NeteaseCloud:
+      enabled: true
+      label: 网易云
+      base-uri: ${NETEASE_CLOUD_URI:https://damp-tor-69597.herokuapp.com}
+      api:
+        song:
+          uri: "/song/detail?ids={id}"
+          root: "$.songs[0]"
+          id: "$.id"
+          name: "$.name"
+          cover: "$.al.picUrl"
+          artists:
+            root: "$.ar"
+            id: "$.id"
+            name: "$.name"
+          album:
+            root: "$.al"
+            id: "$.id"
+            name: "$.name"
+            picUrl: "$.picUrl"
+        song-lyric:
+          uri: "/lyric?id={id}"
+          root: "$.lrc"
+          lyric: "$.lyric"
+        song-url:
+          uri: "/song/url?id={id}"
+          root: "$.data[0]"
+          url: "$.url"
+        search-song:
+          uri: "/search?keywords={q}&limit={limit}&offset={offset}"
+          root: "$.result"
+          total: "$.songCount"
+          list:
+            root: "$.songs"
+            id: "$.id"
+            name: "$.name"
+            artists:
+              root: "$.artists"
+              id: "$.id"
+              name: "$.name"
+        play-list:
+          uri: "/playlist/detail?id={playListId}"
+          root: "$.playlist"
+          name: "$.name"
+          id: "$.id"
+          songs:
+            root: "$.tracks"
+            name: "$.name"
+            id: "$.id"
+          songIds: "$.trackIds[*].id"
+
+
+
+swagger:
+  enabled: true
