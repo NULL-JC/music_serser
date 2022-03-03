@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface UserMapper {
 
-    String findPassByUsername(String username);
+    Integer verifyPassword(String username, String password);
 
     Long findUidByUsername(String username);
 

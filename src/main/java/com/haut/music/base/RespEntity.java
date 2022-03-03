@@ -22,6 +22,11 @@ public class RespEntity<T> {
         this.code = RespCode.SUCCESS;
         this.data = data;
     }
+    public RespEntity(T data,String message) {
+        this.code = RespCode.SUCCESS;
+        this.data = data;
+        this.message = message;
+    }
 
     public RespEntity(Integer code, String message) {
         this.code = code;

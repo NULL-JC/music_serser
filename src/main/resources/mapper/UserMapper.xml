@@ -2,8 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.haut.music.mapper.UserMapper">
 
-    <select id="findPassByUsername" parameterType="java.lang.String" resultType="java.lang.String">
-        select password from userlogin where username=#{username}
+    <select id="verifyPassword" resultType="java.lang.Integer">
+        select count(*)
+        from userlogin
+        where username = #{username} and password = #{password}
     </select>
 
     <select id="findUidByUsername" resultType="java.lang.Long">

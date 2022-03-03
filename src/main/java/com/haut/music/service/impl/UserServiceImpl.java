@@ -14,8 +14,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean userLoginByUsernameAndPass(String username, String password) {
-        String pass = userMapper.findPassByUsername(username);
-        if(pass.equals(DigestUtils.md5DigestAsHex(password.getBytes()))){
+        String pass = DigestUtils.md5DigestAsHex(password.getBytes());
+        int cnt = userMapper.verifyPassword(username, pass);
+        if(cnt>0){
             return true;
         }
         return false;

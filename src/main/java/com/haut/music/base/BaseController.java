@@ -18,6 +18,12 @@ public class BaseController {
         return new RespEntity<T>(data);
     }
 
+    protected static <T> RespEntity<T> success(T data,String message) {
+        return new RespEntity<T>(data,message);
+    }
+
+
+
     /**
      * 失败
      *
