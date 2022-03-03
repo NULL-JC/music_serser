@@ -10,8 +10,8 @@ public interface RecommendService {
 
     /**
      * 推荐歌曲
-     * @param uid
+     * @param username
      * @return
      */
-    PageInfo<Song> recommendSongsByUid(Long uid,Integer pageNum, Integer pageSize);
+    PageInfo<Song> recommendSongsByUid(String username,Integer pageNum, Integer pageSize);
 }

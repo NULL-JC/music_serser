@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.haut.music.domain.Artist;
 import com.haut.music.domain.Song;
 import com.haut.music.mapper.RecommendMapper;
+import com.haut.music.mapper.UserMapper;
 import com.haut.music.service.RecommendService;
 import com.haut.music.service.musicsource.IMusicResourceServiceProxy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +25,13 @@ public class RecommendServiceImpl implements RecommendService {
     private IMusicResourceServiceProxy sourceProxy;
     @Autowired
     private RecommendMapper recMapper;
-
+    @Autowired
+    private UserMapper userMapper;
 
 
     @Override
-    public PageInfo<Song> recommendSongsByUid(Long uid, Integer pageNum, Integer pageSize) {
+    public PageInfo<Song> recommendSongsByUid(String username, Integer pageNum, Integer pageSize) {
+        long uid = userMapper.findUidByUsername(username);
         List<Song> songs = recMapper.getRecSongByUid(uid,pageNum,pageSize);
         final CountDownLatch latch = new CountDownLatch(songs.size());
         ExecutorService pool = Executors.newCachedThreadPool();
