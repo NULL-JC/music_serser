@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.haut.music.mapper.UserMapper">
+    <resultMap id="userInformationMap" type="com.haut.music.domain.User" >
+        <id column="u_id" property="uid"/>
+        <result column="u_name" property="nickname"/>
+        <result column="password" property="password"/>
+        <result column="u_birthday" property="birthday"/>
+        <result column="u_gender" property="gender"/>
+        <result column="u_img_url" property="imgUrl"/>
+        <result column="u_sign" property="sign"/>
+    </resultMap>
 
     <select id="verifyPassword" resultType="java.lang.Integer">
         select count(*)
@@ -8,9 +17,14 @@
         where username = #{username} and password = #{password}
     </select>
 
-    <select id="findUidByUsername" resultType="java.lang.Long">
-        select u_id From userlogin where username=#{username}
+    <select id="findByUsername" resultMap="userInformationMap">
+        select u_id,password from userlogin where username=#{username}
     </select>
+
+    <select id="findUserInformationByUid" resultMap="userInformationMap">
+        select * From user where u_id=#{uid}
+    </select>
+
 
     <insert id="generateUser">
         insert into userlogin(u_id,username,password) values(#{uid},#{username},#{password})

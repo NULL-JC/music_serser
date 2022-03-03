@@ -1,5 +1,7 @@
 package com.haut.music.service;
 
+import com.haut.music.domain.User;
+
 /**
  * 用户服务
  */
@@ -12,5 +14,6 @@ public interface UserService {
      * @return
      * 若找到返回true
      */
-    boolean userLoginByUsernameAndPass(String username,String password);
+    String userLoginByUsernameAndPass(String username,String password);
+    User getUserInformation(String username);
 }

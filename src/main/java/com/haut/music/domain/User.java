@@ -1,6 +1,19 @@
 package com.haut.music.domain;
 
-public class User {
+import lombok.Data;
 
+import java.io.Serializable;
+import java.util.Date;
 
+@Data
+public class User implements Serializable {
+    private Long uid;
+    private String username;
+    private String password;
+    private String nickname;
+    private Date birthday;
+    private Integer gender;
+    //个性签名
+    private String imgUrl;
+    private String sign;
 }

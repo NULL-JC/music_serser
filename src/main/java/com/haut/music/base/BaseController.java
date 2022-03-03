@@ -23,6 +23,10 @@ public class BaseController {
     }
 
 
+    protected static <T> RespEntity<T> success(boolean success, String message) {
+        return new RespEntity<T>(success,message);
+    }
+
 
     /**
      * 失败

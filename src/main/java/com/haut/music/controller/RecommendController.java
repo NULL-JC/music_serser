@@ -19,10 +19,11 @@ public class RecommendController extends BaseController {
     private RecommendService recService;
 
     @GetMapping("/songs")
-    public RespEntity<PageInfo<Song>> recommendSongsByUid(@RequestParam String username,
-                                                          @RequestParam(required = false, defaultValue = "1") Integer pageNum,
-                                                          @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        return success(recService.recommendSongsByUid(username,pageNum,pageSize));
+    public RespEntity<PageInfo<Song>> recommendSongsByUid(@RequestParam("username") String username,
+                                                          @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                                          @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                                          @RequestParam("token") String token) {
+        return success(recService.recommendSongsByUid(username,pageNum,pageSize,token));
 
     }
 }

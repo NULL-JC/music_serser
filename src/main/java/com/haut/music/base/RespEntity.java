@@ -12,13 +12,21 @@ import lombok.Setter;
 @Setter
 public class RespEntity<T> {
     private Integer code;
+    private boolean success;
     private String message;
     private T data;
 
     public RespEntity() {
     }
 
+    public RespEntity(boolean success, String message) {
+        this.code = RespCode.SUCCESS;
+        this.success = success;
+        this.message = message;
+    }
+
     public RespEntity(T data) {
+        this.success=true;
         this.code = RespCode.SUCCESS;
         this.data = data;
     }

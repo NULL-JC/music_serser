@@ -2,8 +2,11 @@ package com.haut.music.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.haut.music.cache.RedisService;
+import com.haut.music.cache.vo.UserKeyPrefix;
 import com.haut.music.domain.Artist;
 import com.haut.music.domain.Song;
+import com.haut.music.domain.User;
 import com.haut.music.mapper.RecommendMapper;
 import com.haut.music.mapper.UserMapper;
 import com.haut.music.service.RecommendService;
@@ -27,12 +30,17 @@ public class RecommendServiceImpl implements RecommendService {
     private RecommendMapper recMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private RedisService redisService;
 
 
     @Override
-    public PageInfo<Song> recommendSongsByUid(String username, Integer pageNum, Integer pageSize) {
-        long uid = userMapper.findUidByUsername(username);
-        List<Song> songs = recMapper.getRecSongByUid(uid,pageNum,pageSize);
+    public PageInfo<Song> recommendSongsByUid(String username, Integer pageNum, Integer pageSize,String token) {
+        //查看是否登录
+        boolean exist = redisService.exists(UserKeyPrefix.TOKEN, token);
+
+        User user = userMapper.findByUsername(username);
+        List<Song> songs = recMapper.getRecSongByUid(user.getUid(),pageNum,pageSize);
         final CountDownLatch latch = new CountDownLatch(songs.size());
         ExecutorService pool = Executors.newCachedThreadPool();
         for (Song song : songs) {

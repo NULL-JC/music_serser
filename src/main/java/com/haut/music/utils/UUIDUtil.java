@@ -33,4 +33,14 @@ public class UUIDUtil {
         }
         return String.valueOf(cs);
     }
+
+
+    /**
+     * UUID工具类用于生成session
+     *
+     */
+    public static String uuid() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
+
 }
