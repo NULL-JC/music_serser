@@ -4,6 +4,11 @@
       "name": "music-server",
       "type": "com.haut.music.service.musicsource.conf.MusicServerConfig",
       "sourceType": "com.haut.music.service.musicsource.conf.MusicServerConfig"
+    },
+    {
+      "name": "spring.redis",
+      "type": "com.haut.music.config.RedisConfig",
+      "sourceType": "com.haut.music.config.RedisConfig"
     }
   ],
   "properties": [
@@ -11,6 +16,33 @@
       "name": "music-server.services",
       "type": "java.util.Map<java.lang.String,com.haut.music.service.musicsource.conf.MusicServerProperty>",
       "sourceType": "com.haut.music.service.musicsource.conf.MusicServerConfig"
+    },
+    {
+      "name": "spring.redis.host",
+      "type": "java.lang.String",
+      "sourceType": "com.haut.music.config.RedisConfig"
+    },
+    {
+      "name": "spring.redis.password",
+      "type": "java.lang.String",
+      "sourceType": "com.haut.music.config.RedisConfig"
+    },
+    {
+      "name": "spring.redis.pool",
+      "type": "java.util.HashMap<java.lang.String,java.lang.String>",
+      "sourceType": "com.haut.music.config.RedisConfig"
+    },
+    {
+      "name": "spring.redis.port",
+      "type": "java.lang.Integer",
+      "sourceType": "com.haut.music.config.RedisConfig",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.redis.timeout",
+      "type": "java.lang.Integer",
+      "sourceType": "com.haut.music.config.RedisConfig",
+      "defaultValue": 0
     }
   ],
   "hints": []

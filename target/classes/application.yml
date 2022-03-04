@@ -8,6 +8,17 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+  # redis
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    timeout: 3
+    # password:
+    pool:
+      minIdle: 1
+      maxIdle: 10
+      maxWait: 3
+      maxActive: 8
 music-server:
   services:
     NeteaseCloud:
@@ -60,6 +71,7 @@ music-server:
             name: "$.name"
             id: "$.id"
           songIds: "$.trackIds[*].id"
+
 
 
 

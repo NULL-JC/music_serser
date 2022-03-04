@@ -23,11 +23,11 @@ public class UserServiceImpl implements UserService {
         //判断用户是否存在（首先从缓存中取，再从数据库取)
         User user = this.getUserByUsername(username);
         if(user==null)
-            return "-1";
+            return "";
         //判断username对应密码是否一致
         String pass = DigestUtils.md5DigestAsHex(password.getBytes());
         if(!user.getPassword().equals(pass)){
-            return "-2";
+            return "";
         }
         //生成cookie
         String token = UUIDUtil.uuid();

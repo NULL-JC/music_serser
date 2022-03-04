@@ -35,9 +35,8 @@ public class RecommendServiceImpl implements RecommendService {
 
 
     @Override
-    public PageInfo<Song> recommendSongsByUid(String username, Integer pageNum, Integer pageSize,String token) {
-        //查看是否登录
-        boolean exist = redisService.exists(UserKeyPrefix.TOKEN, token);
+    public PageInfo<Song> recommendSongsByUid(String username, Integer pageNum, Integer pageSize) {
+
 
         User user = userMapper.findByUsername(username);
         List<Song> songs = recMapper.getRecSongByUid(user.getUid(),pageNum,pageSize);

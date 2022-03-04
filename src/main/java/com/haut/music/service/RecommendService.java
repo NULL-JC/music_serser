@@ -13,5 +13,5 @@ public interface RecommendService {
      * @param username
      * @return
      */
-    PageInfo<Song> recommendSongsByUid(String username,Integer pageNum, Integer pageSize,String token);
+    PageInfo<Song> recommendSongsByUid(String username,Integer pageNum, Integer pageSize);
 }
