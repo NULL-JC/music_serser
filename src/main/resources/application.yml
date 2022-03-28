@@ -1,10 +1,10 @@
 server:
-  port: 9001
+  port: 9002
 logging:
   config: classpath:logback-spring.xml
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/music?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/music?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useAffectedRows=true
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -21,7 +21,7 @@ spring:
       maxActive: 8
 music-server:
   services:
-    NeteaseCloud:
+    nc:
       enabled: true
       label: 网易云
       base-uri: ${NETEASE_CLOUD_URI:https://damp-tor-69597.herokuapp.com}
@@ -71,6 +71,44 @@ music-server:
             name: "$.name"
             id: "$.id"
           songIds: "$.trackIds[*].id"
+    qq:
+      enabled: true
+      label: QQ音乐
+      base-uri: ${QQ_MUSIC_URI:https://shrouded-wildwood-14058.herokuapp.com}
+      api:
+        song-lyric:
+          uri: "/lyric?songmid={id}"
+          root: "$.data"
+          lyric: "$.lyric"
+        song:
+          uri: "/song?songmid={id}"
+          root: "$.data.track_info"
+          id: "$.mid"
+          name: "$.name"
+          artists:
+            root: "$.singer"
+            id: "$.mid"
+            name: "$.name"
+          album:
+            root: "$.album"
+            id: "$.mid"
+            name: "$.name"
+        song-url:
+          uri: "/song/urls?id={id}"
+          root: "$.data.*"
+          url: "$[0]"
+        search-song:
+          uri: "/search?key={q}&pageNo={pageNum}&pageSize={pageSize}"
+          root: "$.data"
+          total: "$.total"
+          list:
+            root: "$.list"
+            id: "$.songmid"
+            name: "$.songname"
+            artists:
+              root: "$.singer"
+              id: "$.mid"
+              name: "$.name"
 
 
 

@@ -6,7 +6,9 @@ import com.github.pagehelper.PageInfo;
 import com.haut.music.domain.MusicUser;
 import com.haut.music.domain.PlayList;
 import com.haut.music.domain.Song;
+import com.haut.music.domain.User;
 import com.haut.music.mapper.SongMapper;
+import com.haut.music.mapper.UserMapper;
 import com.haut.music.service.MusicService;
 import com.haut.music.service.musicsource.IMusicResourceServiceProxy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +21,6 @@ import java.util.List;
 public class  MusicServiceImpl implements MusicService {
     @Autowired
     private IMusicResourceServiceProxy sourceProxy;
-    @Autowired
-    private SongMapper songMapper;
 
     @Override
     public PageInfo<Song> searchSong(String q, String source, Integer pageNum, Integer pageSize) {
@@ -43,6 +43,11 @@ public class  MusicServiceImpl implements MusicService {
     }
 
     @Override
+    public Song getSongWithoutLyrBySourceAndId(String source, String id) {
+        return sourceProxy.getSongWithoutLyrById(source,id);
+    }
+
+    @Override
     public String getSongUrlBySourceAndId(String source, String id) {
         return sourceProxy.getSongUrlById(source, id);
     }
@@ -54,19 +59,14 @@ public class  MusicServiceImpl implements MusicService {
 
     @Override
     public Boolean updateCover() {
-        List<Song> songs = songMapper.selectList(new QueryWrapper<>());
-        for (Song song : songs) {
-            Song sourceSong = getSongBySourceAndId(song.getSource(), song.getId());
-            if (sourceSong == null || StringUtils.isEmpty(sourceSong.getCover())) {
-                continue;
-            }
-            Song t = new Song();
-            t.setId(song.getId());
-            t.setSource(song.getSource());
-            Song entity = new Song();
-            entity.setCover(sourceSong.getCover());
-            songMapper.update(entity, new UpdateWrapper<>(t));
-        }
         return true;
     }
+
+    @Override
+    public Boolean isSubscribe(String user, String song_id) {
+
+        return null;
+    }
+
+
 }

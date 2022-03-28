@@ -19,22 +19,25 @@ public class RespEntity<T> {
     public RespEntity() {
     }
 
-    public RespEntity(boolean success, String message) {
-        this.code = RespCode.SUCCESS;
-        this.success = success;
-        this.message = message;
-    }
 
     public RespEntity(T data) {
         this.success=true;
         this.code = RespCode.SUCCESS;
         this.data = data;
     }
-    public RespEntity(T data,String message) {
+    public RespEntity(boolean success, T data) {
         this.code = RespCode.SUCCESS;
+        this.success = success;
         this.data = data;
-        this.message = message;
     }
+
+    public RespEntity(boolean success, T data, String message) {
+        this.code = RespCode.SUCCESS;
+        this.success = success;
+        this.message = message;
+        this.data = data;
+    }
+
 
     public RespEntity(Integer code, String message) {
         this.code = code;

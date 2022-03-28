@@ -3,9 +3,9 @@ package com.haut.music.cache.vo;
 import java.io.Serializable;
 
 public class UserKeyPrefix extends BaseKeyPrefix implements Serializable {
-    public static final int TOKEN_EXPIRE = 30*60;   //缓存有效时间30min
+    private static final int TOKEN_EXPIRE = 60*60*24*7;  //缓存有效时间7days
 
-    public UserKeyPrefix(int expireSeconds, String prefix) {
+    private UserKeyPrefix(int expireSeconds, String prefix) {
         super(expireSeconds, prefix);
     }
 

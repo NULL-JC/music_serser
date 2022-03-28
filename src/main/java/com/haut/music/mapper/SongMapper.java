@@ -5,4 +5,5 @@ import com.haut.music.domain.Song;
 
 
 public interface SongMapper extends BaseMapper<Song> {
+
 }

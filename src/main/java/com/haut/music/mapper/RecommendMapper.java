@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface RecommendMapper {
 
-    List<Song> getRecSongByUid(Long  uid,Integer pageNum, Integer pageSize);
+    List<Song> getRecSongByUid(String uid,Integer pageNum, Integer pageSize);
+
+    List<String> getRecSongIdByUid(String uid,Integer pageNum, Integer pageSize);
 }

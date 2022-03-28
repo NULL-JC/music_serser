@@ -18,13 +18,12 @@ public class BaseController {
         return new RespEntity<T>(data);
     }
 
-    protected static <T> RespEntity<T> success(T data,String message) {
-        return new RespEntity<T>(data,message);
+    protected static <T> RespEntity<T> success(boolean success,T data) {
+        return new RespEntity<T>(data);
     }
 
-
-    protected static <T> RespEntity<T> success(boolean success, String message) {
-        return new RespEntity<T>(success,message);
+    protected static <T> RespEntity<T> success(boolean success,T data,String message) {
+        return new RespEntity<T>(success,data,message);
     }
 
 

@@ -53,6 +53,15 @@ public interface MusicService {
     Song getSongBySourceAndId(String source, String id);
 
     /**
+     * 获取音乐(无歌词)
+     *
+     * @param source 来源
+     * @param id     id
+     * @return song
+     */
+    Song getSongWithoutLyrBySourceAndId(String source, String id);
+
+    /**
      * 获取 音乐的播放地址
      *
      * @param source 来源
@@ -71,4 +80,14 @@ public interface MusicService {
     PlayList getSongsBySourceAndPlayListId(String source, String sourcePlayListId);
 
     Boolean updateCover();
+
+    /**
+     * 判断用户是否已收藏歌曲
+     * @param user
+     * @param song_id
+     * @return
+     */
+    Boolean isSubscribe(String user,String song_id);
+
+
 }

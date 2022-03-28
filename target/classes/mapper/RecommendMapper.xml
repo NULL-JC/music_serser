@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.haut.music.mapper.RecommendMapper">
     <resultMap id="BaseResultMap" type="com.haut.music.domain.Song" >
-        <id column="song_id" jdbcType="INTEGER" property="id"/>
+        <id column="song_id" jdbcType="VARCHAR" property="id"/>
         <result column="song_name" jdbcType="VARCHAR" property="name"/>
 <!--        <association property="album" javaType="com.haut.music.domain.Album">-->
 <!--            <id column="song_pl_id" property="id"/>-->
@@ -12,11 +12,20 @@
 <!--        </collection>-->
     </resultMap>
 
-    <select id="getRecSongByUid" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    <select id="getRecSongByUid" resultMap="BaseResultMap">
         select song_id,song_name from usersongrec usr,song
         where usr.user=#{uid} and usr.related=song.song_id
         order by usr.sim desc
         limit ${(pageNum-1)*pageSize},${pageNum*pageSize}
     </select>
+
+    <select id="getRecSongIdByUid" resultType="java.lang.String">
+        select song_id from usersongrec usr,song
+        where usr.user=#{uid} and usr.related=song.song_id
+        order by usr.sim desc
+        limit ${(pageNum-1)*pageSize},${pageNum*pageSize}
+    </select>
+
+
 
 </mapper>

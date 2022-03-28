@@ -9,4 +9,7 @@
         <result column="lyric" property="lyric"/>
         <result column="artists_name" property="artistsName"/>
     </resultMap>
+
+
 </mapper>
+

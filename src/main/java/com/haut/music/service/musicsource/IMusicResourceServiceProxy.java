@@ -19,7 +19,7 @@ public interface IMusicResourceServiceProxy {
     Song getSongById(String source, String id);
 
     /**
-     * 根据id获取音乐信息
+     * 根据id获取音乐信息(无歌词)
      *
      * @param source
      * @param id

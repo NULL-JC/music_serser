@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Data
 public class User implements Serializable {
-    private Long uid;
+    private String uid;
     private String username;
     private String password;
     private String nickname;

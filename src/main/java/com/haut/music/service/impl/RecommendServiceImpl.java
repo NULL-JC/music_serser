@@ -1,20 +1,14 @@
 package com.haut.music.service.impl;
 
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.haut.music.cache.RedisService;
-import com.haut.music.cache.vo.UserKeyPrefix;
-import com.haut.music.domain.Artist;
 import com.haut.music.domain.Song;
-import com.haut.music.domain.User;
 import com.haut.music.mapper.RecommendMapper;
-import com.haut.music.mapper.UserMapper;
+import com.haut.music.service.MusicService;
 import com.haut.music.service.RecommendService;
-import com.haut.music.service.musicsource.IMusicResourceServiceProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -23,37 +17,27 @@ import java.util.concurrent.Executors;
 @Service
 public class RecommendServiceImpl implements RecommendService {
 
-    private static String musicSource="NeteaseCloud";
+    private static String musicSource="nc";
     @Autowired
-    private IMusicResourceServiceProxy sourceProxy;
+    private MusicService musicService;
     @Autowired
     private RecommendMapper recMapper;
-    @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private RedisService redisService;
 
 
     @Override
-    public PageInfo<Song> recommendSongsByUid(String username, Integer pageNum, Integer pageSize) {
+    public PageInfo<Song> recommendSongsByUid(String uid, Integer pageNum, Integer pageSize) {
 
-
-        User user = userMapper.findByUsername(username);
-        List<Song> songs = recMapper.getRecSongByUid(user.getUid(),pageNum,pageSize);
-        final CountDownLatch latch = new CountDownLatch(songs.size());
+        List<String> songIdList = recMapper.getRecSongIdByUid(uid,pageNum,pageSize);
+        final CountDownLatch latch = new CountDownLatch(songIdList.size());
         ExecutorService pool = Executors.newCachedThreadPool();
-        for (Song song : songs) {
+        List<Song> songs = new ArrayList<>();
+        for (String songId : songIdList) {
             Runnable run = new Runnable() {
                 public void run() {
-                    Song sourceSong = sourceProxy.getSongWithoutLyrById(musicSource, song.getId());
-
-                    if (sourceSong == null) {
-                        return;
+                    Song song = musicService.getSongWithoutLyrBySourceAndId(musicSource, songId);
+                    if (song != null) {
+                        songs.add(song);
                     }
-                    song.setSource(musicSource);
-                    song.setCover(sourceSong.getCover());
-                    song.setArtists(sourceSong.getArtists());
-                    song.setAlbum(sourceSong.getAlbum());
                     latch.countDown();
                 }
             };
@@ -65,6 +49,6 @@ public class RecommendServiceImpl implements RecommendService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return new PageInfo<Song>(songs);
+        return new PageInfo<>(songs);
     }
 }

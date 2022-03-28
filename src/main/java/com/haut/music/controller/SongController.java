@@ -6,10 +6,7 @@ import com.haut.music.base.RespEntity;
 import com.haut.music.domain.Song;
 import com.haut.music.service.MusicService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/song")
@@ -25,4 +22,14 @@ public class SongController extends BaseController {
             @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
         return success(musicService.searchSong(keywords, source, pageNum, pageSize));
     }
+
+    @GetMapping("/getSong ")
+    public RespEntity getSongBysongIdAndSource(
+            @RequestParam("songId") String songId,
+            @RequestParam("source") String source) {
+        return success(musicService.getSongWithoutLyrBySourceAndId(source,songId));
+    }
+
+
+
 }

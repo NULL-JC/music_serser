@@ -2,6 +2,8 @@ package com.haut.music.service.musicsource.impl;
 
 
 import com.github.pagehelper.PageInfo;
+import com.haut.music.cache.RedisService;
+import com.haut.music.cache.vo.SongKeyPrefix;
 import com.haut.music.constant.CacheKey;
 import com.haut.music.domain.*;
 import com.haut.music.exception.MusicException;
@@ -12,8 +14,6 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
@@ -53,9 +53,9 @@ public class JsonPathMusicResourceServiceProxyImpl implements IMusicResourceServ
     }
 
     @Autowired
-    private CacheManager cacheManager;
-    @Autowired
     private MusicServerConfig musicServerConfig;
+    @Autowired
+    private RedisService redisService;
 
     /**
      * 根据id获取音乐信息
@@ -66,16 +66,14 @@ public class JsonPathMusicResourceServiceProxyImpl implements IMusicResourceServ
      */
     @Override
     public Song getSongById(String source, String id) {
-        Song result = getSongWithoutLyrBySourceAndId(source, id);
+        Song result = getSongWithoutLyrById(source, id);
         result.setLyric(getLyric(source, id));
         return result;
     }
 
     @Override
     public Song getSongWithoutLyrById(String source, String id) {
-        Cache cache = cacheManager.getCache(CacheKey.SONG);
-        String key = CacheKey.getKeyBySourceAndId(source, id);
-        Song result = cache.get(key, Song.class);
+        Song result = redisService.get(SongKeyPrefix.SONG, source + "_" + id, Song.class);
         if (result == null) {
             Map<String, Object> uriVariables = new HashMap<>(2);
             uriVariables.put("id", id);
@@ -91,6 +89,7 @@ public class JsonPathMusicResourceServiceProxyImpl implements IMusicResourceServ
             result.setId(read(songJson, config.getId()));
             result.setName(read(songJson, config.getName()));
             result.setCover(read(songJson, config.getCover()));
+
             JsonPathArtistsConfig artistsConfig = config.getArtists();
             List<Object> artistsJsonArray = read(songJson, artistsConfig.getRoot());
             if (artistsJsonArray != null && !artistsJsonArray.isEmpty()) {
@@ -109,8 +108,18 @@ public class JsonPathMusicResourceServiceProxyImpl implements IMusicResourceServ
             album.setId(read(albumJson,albumConfig.getId()).toString());
             album.setName(read(albumJson,albumConfig.getName()));
             album.setPicUrl(read(albumJson,albumConfig.getPicUrl()));
+
+
+            if(source.equals("qq")){
+                String imgUrl = "https://y.gtimg.cn/music/photo_new/T002R300x300M000"+ album.getId() +".jpg?max_age=2592000";
+                album.setPicUrl(imgUrl);
+                result.setCover(imgUrl);
+            }
+
+
             result.setAlbum(album);
 
+
             if (config.isProcessProperties()
                     && config.getPropertiesAlias() != null
                     && !config.getPropertiesAlias().isEmpty()
@@ -127,75 +136,23 @@ public class JsonPathMusicResourceServiceProxyImpl implements IMusicResourceServ
                 }
             }
             result.setSource(source);
-            cache.put(key, result);
+            redisService.set(SongKeyPrefix.SONG,source + "_" + id,result);
         }
         return result;
     }
 
-    private Song getSongWithoutLyrBySourceAndId(String source, String id) {
-        Cache cache = cacheManager.getCache(CacheKey.SONG);
-        String key = CacheKey.getKeyBySourceAndId(source, id);
-        Song result = cache.get(key, Song.class);
-        if (result == null) {
-            Map<String, Object> uriVariables = new HashMap<>(2);
-            uriVariables.put("id", id);
-            MusicServerProperty property = musicServerConfig.getProperty(source);
-            MusicApiGetSongConfig config = property.getApi().getSong();
-            String resp = request(
-                    property.getBaseUri() + "/" + config.getUri(),
-                    uriVariables,
-                    config.getMethod()
-            );
-            Object songJson = read(resp, config.getRoot());
-            result = new Song();
-            result.setId(read(songJson, config.getId()));
-            result.setName(read(songJson, config.getName()));
-            result.setCover(read(songJson, config.getCover()));
-            JsonPathArtistsConfig artistsConfig = config.getArtists();
-            List<Object> artistsJsonArray = read(songJson, artistsConfig.getRoot());
-            if (artistsJsonArray != null && !artistsJsonArray.isEmpty()) {
-                List<Artist> artists = new ArrayList<>();
-                for (Object artistsJson : artistsJsonArray) {
-                    Artist artist = new Artist();
-                    artist.setId(read(artistsJson, artistsConfig.getId()).toString());
-                    artist.setName(read(artistsJson, artistsConfig.getName()));
-                    artists.add(artist);
-                }
-                result.setArtists(artists);
-            }
-            if (config.isProcessProperties()
-                    && config.getPropertiesAlias() != null
-                    && !config.getPropertiesAlias().isEmpty()
-            ) {
-                Map<String, String> properties = new HashMap<>();
-                config.getPropertiesAlias().forEach((k, exp) -> {
-                    String value = read(songJson, exp);
-                    if (!StringUtils.isEmpty(value)) {
-                        properties.put(k, value);
-                    }
-                });
-                if (!properties.isEmpty()) {
-                    result.setProperties(properties);
-                }
-            }
-            result.setSource(source);
-            cache.put(key, result);
-        }
-        return result;
-    }
 
     @Override
     public String getSongUrlById(String source, String id) {
-        Cache cache = cacheManager.getCache(CacheKey.MUSIC_URL);
-        String key = CacheKey.getKeyBySourceAndId(source, id);
-        String url = cache.get(key, String.class);
+
+        String url = redisService.get(SongKeyPrefix.SONGURL, source + "_" + id, String.class);
         if (StringUtils.isEmpty(url)) {
             Map<String, Object> uriVariables = new HashMap<>(2);
             uriVariables.put("id", id);
             MusicServerProperty property = musicServerConfig.getProperty(source);
             MusicApiGetSongUrlConfig config = property.getApi().getSongUrl();
             if (config.isUseProperties()) {
-                Song song = getSongWithoutLyrBySourceAndId(source, id);
+                Song song = getSongWithoutLyrById(source, id);
                 if (song.getProperties() != null && !song.getProperties().isEmpty()) {
                     uriVariables.putAll(song.getProperties());
                 }
@@ -207,7 +164,7 @@ public class JsonPathMusicResourceServiceProxyImpl implements IMusicResourceServ
             );
             Object root = read(resp, config.getRoot());
             url = read(root, config.getUrl());
-            cache.put(key, url);
+            redisService.set(SongKeyPrefix.SONGURL,source + "_" + id,url);
         }
         return url;
     }
@@ -283,7 +240,7 @@ public class JsonPathMusicResourceServiceProxyImpl implements IMusicResourceServ
         MusicServerProperty property = musicServerConfig.getProperty(source);
         MusicApiGetSongLyrConfig config = property.getApi().getSongLyric();
         if (config.isUseProperties()) {
-            Song song = getSongWithoutLyrBySourceAndId(source, id);
+            Song song = getSongWithoutLyrById(source, id);
             if (song.getProperties() != null && !song.getProperties().isEmpty()) {
                 uriVariables.putAll(song.getProperties());
             }
@@ -304,7 +261,7 @@ public class JsonPathMusicResourceServiceProxyImpl implements IMusicResourceServ
         MusicServerProperty property = musicServerConfig.getProperty(source);
         MusicApiGetPlayListConfig config = property.getApi().getPlayList();
         if (config.isUseProperties()) {
-            Song song = getSongWithoutLyrBySourceAndId(source, playListId);
+            Song song = getSongWithoutLyrById(source, playListId);
             if (song.getProperties() != null && !song.getProperties().isEmpty()) {
                 uriVariables.putAll(song.getProperties());
             }

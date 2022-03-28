@@ -33,4 +33,22 @@
     <select id="generateRamUser" resultType="java.lang.Long">
         SELECT u_id FROM user order by rand() limit 10
     </select>
+
+    <insert id="songSubscribe">
+        INSERT INTO songsub (u_id, song_id) VALUES (#{uid},#{song_id})
+    </insert>
+
+    <select id="isSongSubscribe" resultType="java.lang.Integer">
+        select 1 from songsub where u_id = #{uid} and song_id=#{song_id} limit 1;
+    </select>
+
+    <delete id="songDeleteSubscribe">
+        DELETE FROM songsub WHERE u_id = #{uid} and song_id=#{song_id};
+    </delete>
+
+    <select id="getSongSub" resultType="java.lang.String">
+        select song_id from songsub where u_id = #{uid}
+        limit ${(pageNum-1)*pageSize},${pageNum*pageSize};
+    </select>
+
 </mapper>
