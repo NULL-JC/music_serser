@@ -14,12 +14,19 @@ public interface UserMapper {
 
     List<Long> generateRamUser();
 
-    Integer songSubscribe(String uid, String song_id);
+    Integer songSubscribe(String uid, String songId);
 
-    Integer isSongSubscribe(String uid, String song_id);
+    Integer songIsSubscribe(String uid, String songId);
 
-    Integer songDeleteSubscribe(String uid, String song_id);
+    Integer songDeleteSubscribe(String uid, String songId);
 
     List<String> getSongSub(String uid, Integer pageNum, Integer pageSize);
 
+    Integer playlistIsSubscribe(String uid, String playlistId);
+
+    Integer playlistSubscribe(String uid, String playlistId);
+
+    Integer playlistDeleteSubscribe(String uid, String playlistId);
+
+    List<String> getPlaylistSub(String uid, Integer pageNum, Integer pageSize);
 }

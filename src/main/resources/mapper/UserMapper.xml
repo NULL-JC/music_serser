@@ -35,15 +35,15 @@
     </select>
 
     <insert id="songSubscribe">
-        INSERT INTO songsub (u_id, song_id) VALUES (#{uid},#{song_id})
+        INSERT INTO songsub (u_id, song_id) VALUES (#{uid},#{songId})
     </insert>
 
-    <select id="isSongSubscribe" resultType="java.lang.Integer">
-        select 1 from songsub where u_id = #{uid} and song_id=#{song_id} limit 1;
+    <select id="songIsSubscribe" resultType="java.lang.Integer">
+        select count(*) from songsub where u_id = #{uid} and song_id=#{songId} limit 1;
     </select>
 
     <delete id="songDeleteSubscribe">
-        DELETE FROM songsub WHERE u_id = #{uid} and song_id=#{song_id};
+        DELETE FROM songsub WHERE u_id = #{uid} and song_id=#{songId};
     </delete>
 
     <select id="getSongSub" resultType="java.lang.String">
@@ -51,4 +51,20 @@
         limit ${(pageNum-1)*pageSize},${pageNum*pageSize};
     </select>
 
+    <select id="playlistIsSubscribe" resultType="java.lang.Integer">
+        select count(*) from playlistsub where u_id = #{uid} and playlist_id=#{playlistId} limit 1;
+    </select>
+
+    <insert id="playlistSubscribe">
+        INSERT INTO playlistsub (u_id, playlist_id) VALUES (#{uid},#{playlistId})
+    </insert>
+
+    <delete id="playlistDeleteSubscribe">
+        DELETE FROM playlistsub WHERE u_id = #{uid} and playlist_id=#{playlistId};
+    </delete>
+
+    <select id="getPlaylistSub" resultType="java.lang.String">
+        select playlist_id from playlistsub where u_id = #{uid}
+        limit ${(pageNum-1)*pageSize},${pageNum*pageSize};
+    </select>
 </mapper>

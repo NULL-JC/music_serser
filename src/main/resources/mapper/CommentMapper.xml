@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haut.music.mapper.CommentMapper">
+
+    <resultMap type="com.haut.music.domain.MusicCommentBean" id="myMusicCommentBean">
+        <id column="id" property="id"/>
+        <result column="u_name" property="userNickName"/>
+        <result column="u_img_url" property="userImgUrl"/>
+        <!-- 关联对象 -->
+        <association property="musicComment" javaType="com.haut.music.domain.MusicComment">
+            <id column="u_id" property="uid"/>
+            <result column="song_id" property="songId"/>
+            <result column="content" property="content"/>
+            <result column="give_like" property="giveLike"/>
+            <result column="create_Time" property="createTime"/>
+            <result column="state" property="state"/>
+        </association>
+    </resultMap>
+
+    <insert id="addMusicComment">
+        insert into songcomment(u_id,song_id,content) values(#{uid},#{songId},#{content})
+    </insert>
+
+    <select id="getMusicComment" resultMap="myMusicCommentBean">
+        SELECT a.id,a.u_id,song_id,content,create_time,state,give_like,u_name,u_img_url FROM songcomment a
+        LEFT JOIN user b ON b.u_id = a.u_id
+        where song_id=#{songId}
+        order by create_time desc
+        limit ${(pageNum-1)*pageSize},${pageNum*pageSize}
+    </select>
+
+    <select id="commentIsLike" resultType="java.lang.Integer">
+        SELECT count(*) FROM commentlike WHERE type_id=#{typeId} AND type=#{type} AND  u_id=#{uid}
+    </select>
+
+    <insert id="addCommentLike">
+        insert into commentlike(u_id,type_id,type) values(#{uid},#{typeId},#{type})
+    </insert>
+
+    <delete id="deleteCommentLike">
+        delete from commentlike where type_id=#{typeId} AND type=#{type} AND  u_id=#{uid}
+    </delete>
+
+    <update id="addMusicCommentLike">
+        UPDATE songcomment SET give_like=give_like+1 WHERE id=#{songCommentId}
+    </update>
+
+    <update id="deleteMusicCommentLike">
+        UPDATE songcomment SET give_like=give_like-1 WHERE id=#{songCommentId}
+    </update>
+</mapper>

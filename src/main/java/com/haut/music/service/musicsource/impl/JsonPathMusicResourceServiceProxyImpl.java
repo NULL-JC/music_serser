@@ -116,7 +116,6 @@ public class JsonPathMusicResourceServiceProxyImpl implements IMusicResourceServ
                 result.setCover(imgUrl);
             }
 
-
             result.setAlbum(album);
 
 

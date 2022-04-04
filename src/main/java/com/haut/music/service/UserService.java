@@ -19,7 +19,6 @@ public interface UserService {
      * 若找到返回true
      */
     String userLoginByUsernameAndPass(String username,String password);
-    User getUserInformation(String username);
 
     /**
      * 收藏歌曲
@@ -30,7 +29,7 @@ public interface UserService {
     Boolean songSubscribe(String uid,String song_id,Boolean sub);
 
     /**
-     * 收藏歌曲
+     * 查询是否已收藏歌曲
      * @param uid
      * @param song_id
      * @return
@@ -43,5 +42,31 @@ public interface UserService {
      * @param uid
      * @return
      */
-    PageInfo<Song> getSongSubList(String uid, Integer pageNum, Integer pageSize);
+    List<Song> getSongSubList(String uid, Integer pageNum, Integer pageSize);
+
+    /**
+     * 收藏歌曲
+     * @param uid
+     * @param playlistId
+     * @param sub
+     * @return
+     */
+    Boolean playlistSubscribe(String uid, String playlistId, Boolean sub);
+
+    /**
+     * 查询是否已收藏歌单
+     * @param uid
+     * @param playlistId
+     * @return
+     */
+    Boolean playlistIsSubscribe(String uid,String playlistId);
+
+    /**
+     * 获取收藏歌单
+     * @param uid
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    List<String[]> getPlaylistSubList(String uid, Integer pageNum, Integer pageSize);
 }

@@ -27,8 +27,8 @@ public class RecommendController extends BaseController {
 
     @GetMapping("/songs")
     public RespEntity recommendSongsByUid(@RequestParam("token") String token,
-                                                          @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                                                          @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+                                          @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                          @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         //查看是否登录
         User user = redisService.get(UserKeyPrefix.TOKEN, token, User.class);
         if(user==null){

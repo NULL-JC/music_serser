@@ -46,11 +46,6 @@ public class UserServiceImpl implements UserService {
         return token;
     }
 
-    @Override
-    public User getUserInformation(String username) {
-        return getUserByUsername(username);
-    }
-
 
     /**
      * 根据username查询用户信息
@@ -69,8 +64,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean songSubscribe(String uid, String song_id,Boolean sub) {
-        Integer count = userMapper.isSongSubscribe(uid, song_id);
-        if(sub&&count!=null|| !sub&&count==null)
+        int count = userMapper.songIsSubscribe(uid, song_id);
+        if(sub&&count!=0|| !sub&&count==0)
             return true;
         if(sub){
             return userMapper.songSubscribe(uid, song_id)==1;
@@ -80,12 +75,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean songIsSubscribe(String uid, String song_id) {
-        Integer count = userMapper.isSongSubscribe(uid, song_id);
-        return count != null;
+        int count = userMapper.songIsSubscribe(uid, song_id);
+        return count != 0;
     }
 
     @Override
-    public PageInfo<Song> getSongSubList(String uid, Integer pageNum, Integer pageSize) {
+    public List<Song> getSongSubList(String uid, Integer pageNum, Integer pageSize) {
         List<String> songIdList = userMapper.getSongSub(uid,pageNum,pageSize);
         List<Song> res = new ArrayList<>();
         for (String songId : songIdList) {
@@ -93,7 +88,36 @@ public class UserServiceImpl implements UserService {
             Song song = musicService.getSongWithoutLyrBySourceAndId(str[0], str[1]);
             res.add(song);
         }
-        return new PageInfo<>(res);
+        return res;
+    }
+
+    @Override
+    public Boolean playlistSubscribe(String uid, String playlistId, Boolean sub) {
+        int count = userMapper.playlistIsSubscribe(uid, playlistId);
+        if(sub&&count!=0|| !sub&&count==0)
+            return true;
+        if(sub){
+            return userMapper.playlistSubscribe(uid, playlistId)==1;
+        }
+        return userMapper.playlistDeleteSubscribe(uid, playlistId)==1;
+    }
+
+    @Override
+    public Boolean playlistIsSubscribe(String uid, String playlistId) {
+        int count = userMapper.playlistIsSubscribe(uid, playlistId);
+        return count != 0;
+    }
+
+    @Override
+    public List<String[]> getPlaylistSubList(String uid, Integer pageNum, Integer pageSize) {
+        List<String> songIdList = userMapper.getPlaylistSub(uid,pageNum,pageSize);
+        List<String[]> res = new ArrayList<>();
+        for (String songId : songIdList) {
+            String[] item = songId.split("_");
+            res.add(item);
+        }
+
+        return res;
     }
 
 }

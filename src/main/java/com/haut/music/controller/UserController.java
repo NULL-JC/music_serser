@@ -57,7 +57,7 @@ public class UserController extends BaseController {
     @PostMapping("/song_sub")
     public RespEntity subscribe(@RequestParam("token") String token,
                                 @RequestParam("song_id") String songId,
-                                @RequestParam("source") String source,
+                                @RequestParam(value = "source",defaultValue = "nc") String source,
                                 @RequestParam("sub") Boolean sub){
         //查看是否登录
         User user = redisService.get(UserKeyPrefix.TOKEN, token, User.class);
@@ -73,7 +73,7 @@ public class UserController extends BaseController {
     @GetMapping("/song_sub_check")
     public RespEntity isSubscribe(@RequestParam("token") String token,
                                   @RequestParam("song_id") String songId,
-                                  @RequestParam("source") String source){
+                                  @RequestParam(value = "source",defaultValue = "nc") String source){
         //查看是否登录
         User user = redisService.get(UserKeyPrefix.TOKEN, token, User.class);
 
@@ -96,8 +96,55 @@ public class UserController extends BaseController {
         if(user==null){
             return success(false,new ExcepData(RespCode.SIGN),"请先登录");
         }
-        PageInfo<Song> data = userService.getSongSubList(user.getUid(), pageNum, pageSize);
+        List<Song> data = userService.getSongSubList(user.getUid(), pageNum, pageSize);
+        return success(new PageInfo<>(data));
+    }
+
+    @PostMapping("/playlist_sub")
+    public RespEntity playlistSubscribe(@RequestParam("token") String token,
+                                @RequestParam("playlist_id") String playlistId,
+                                @RequestParam(value = "source",defaultValue = "qq") String source,
+                                @RequestParam("sub") Boolean sub){
+        //查看是否登录
+        User user = redisService.get(UserKeyPrefix.TOKEN, token, User.class);
+
+        if(user==null){
+            return success(false,new ExcepData(RespCode.SIGN),"请先登录");
+        }
+
+        userService.playlistSubscribe(user.getUid(), source + "_" + playlistId, sub);
+        return success(null);
+    }
+
+    @GetMapping("/playlist_sub_check")
+    public RespEntity playlistIsSubscribe(@RequestParam("token") String token,
+                                  @RequestParam("playlist_id") String playlistId,
+                                  @RequestParam(value = "source",defaultValue = "qq") String source){
+        //查看是否登录
+        User user = redisService.get(UserKeyPrefix.TOKEN, token, User.class);
+
+        if(user==null){
+            return success(false,new ExcepData(RespCode.SIGN),"请先登录");
+        }
+        Boolean favor = userService.playlistIsSubscribe(user.getUid(), source + "_" + playlistId);
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("favor", favor);
         return success(data);
+    }
+
+
+    @GetMapping("/playlist_sublist")
+    public RespEntity getPlaylistSubList(@RequestParam("token") String token,
+                                     @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                     @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize){
+        //查看是否登录
+        User user = redisService.get(UserKeyPrefix.TOKEN, token, User.class);
+
+        if(user==null){
+            return success(false,new ExcepData(RespCode.SIGN),"请先登录");
+        }
+        List<String[]> data = userService.getPlaylistSubList(user.getUid(), pageNum, pageSize);
+        return success(new PageInfo<>(data));
     }
 
 }

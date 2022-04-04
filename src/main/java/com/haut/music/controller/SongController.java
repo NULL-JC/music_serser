@@ -24,9 +24,9 @@ public class SongController extends BaseController {
     }
 
     @GetMapping("/getSong ")
-    public RespEntity getSongBysongIdAndSource(
+    public RespEntity getSongBySongIdAndSource(
             @RequestParam("songId") String songId,
-            @RequestParam("source") String source) {
+            @RequestParam(value = "source",defaultValue = "nc") String source) {
         return success(musicService.getSongWithoutLyrBySourceAndId(source,songId));
     }
 
