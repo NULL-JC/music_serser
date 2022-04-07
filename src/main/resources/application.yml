@@ -24,7 +24,7 @@ music-server:
     nc:
       enabled: true
       label: 网易云
-      base-uri: ${NETEASE_CLOUD_URI:https://damp-tor-69597.herokuapp.com}
+      base-uri: ${NETEASE_CLOUD_URI:http://47.113.198.127:3000/}
       api:
         song:
           uri: "/song/detail?ids={id}"
@@ -74,7 +74,7 @@ music-server:
     qq:
       enabled: true
       label: QQ音乐
-      base-uri: ${QQ_MUSIC_URI:https://shrouded-wildwood-14058.herokuapp.com}
+      base-uri: ${QQ_MUSIC_URI:http://47.113.198.127:3300/}
       api:
         song-lyric:
           uri: "/lyric?songmid={id}"
